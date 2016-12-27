@@ -1,4 +1,4 @@
-package com.ymd.nioserver.server;
+package com.ubs.eq.posttrade.feeenginewrapper.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,11 +11,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 
- * 
- *
- */
 public class SocketAccepter implements Runnable {
 	
 	/**
@@ -30,7 +25,7 @@ public class SocketAccepter implements Runnable {
 	 */
 	private long sleepTime = 10;  
 	
-	public SocketAccepter(Queue<Socket> socketQueue, int tcpPort) {
+	public SocketAccepter(int tcpPort, Queue<Socket> socketQueue) {
 		this.socketQueue = socketQueue;
 		this.tcpPort = tcpPort;
 	}
@@ -73,7 +68,6 @@ public class SocketAccepter implements Runnable {
 
 		                keyIterator.remove();
 		            }
-		            //remove this selectionKey ?? what's that meaning??
 		            
 		            selectedKeys.clear();
 				}
@@ -84,6 +78,4 @@ public class SocketAccepter implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
-	
 }
