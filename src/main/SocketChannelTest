@@ -1,0 +1,63 @@
+package feeEngineWrapper;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+
+public class SocketChannelTest {
+	
+	public static void main(String[] args) throws IOException {
+		
+		SocketChannel sc = SocketChannel.open();
+		sc.connect(new InetSocketAddress("localhost", 9999));
+		
+		sc.configureBlocking(false);
+		
+		
+		ByteBuffer bb = ByteBuffer.allocate(1024);
+		ByteBuffer bb2 = ByteBuffer.allocate(1024);
+		String source = "{\"opt\":\"calculatefee\"}";
+		int length = source.getBytes().length;
+		
+		System.out.println("000000"+length);
+		String data = "000000"+length+source;
+		
+		bb.put(data.getBytes());
+		bb.flip();
+		
+		sc.write(bb);
+		
+		int data1 = 0;
+		while(true) {
+		if((data1 =sc.read(bb2)) > 0) {
+			bb2.flip();
+			byte[] bar1 = new byte[data1];
+			bb2.get(bar1, 0,  data1);
+			System.out.println(new String(bar1));
+		}
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		}
+		
+		
+		
+		
+		
+		
+//		while(true) {
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+		
+	}
+	
+	
+}
