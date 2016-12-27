@@ -1,23 +1,21 @@
-package com.ymd.nioserver.tcp;
+package com.ubs.eq.posttrade.feeenginewrapper.tcp;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ymd.nioserver.server.IMessageReader;
-import com.ymd.nioserver.server.Message;
-import com.ymd.nioserver.server.Socket;
+import com.ubs.eq.posttrade.feeenginewrapper.server.IMessageReader;
+import com.ubs.eq.posttrade.feeenginewrapper.server.Message;
+import com.ubs.eq.posttrade.feeenginewrapper.server.Socket;
 
-/**
- *
- */
 public class TcpMessageReader implements IMessageReader {
 	
 	private List<Message> completeMessages = new ArrayList<Message>();
     private Message nextMessage = new Message();
 	
 	public void read(Socket socket, ByteBuffer byteBuffer) throws IOException {
+		@SuppressWarnings("unused")
 		int bytesRead = socket.read(byteBuffer);
         byteBuffer.flip();
 
