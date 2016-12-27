@@ -1,4 +1,4 @@
-package com.ymd.nioserver.server;
+package com.ubs.eq.posttrade.feeenginewrapper.server;
 
 import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
@@ -6,15 +6,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
+
 /**
- *MessageFormat like
- * 
- * 0000 0000 {"opt":"CalculateFee","Params":{"prar1":"michael"}}
- * 
- *
+ * MessageFormat like
+ * 00000000{"opt":"CalculateFee","Params":{"prar1":"michael"}}
  */
 public class Message {
-	
+
 	public byte[] messageBody = null;
 	
 	public byte[] messageHead = null;
@@ -27,8 +25,9 @@ public class Message {
 	private int headLength = 0;
 	private int bodyLength = 0;
 	
-	public long socketId = 0;
+	private long socketId = 0;
 	
+	//create read message
 	public Message() {
 		messageHead = new byte[Message.HEAD_CAPACITY];
 		capacity = 0;
@@ -36,6 +35,37 @@ public class Message {
 		bodyLength = 0;
 	}
 	
+	//create write message
+	public Message(String data) {
+		byte[] msg = data.getBytes();
+		headLength = 0;
+		bodyLength = 0;
+		capacity = msg.length;
+		messageBody = msg;
+		messageHead = this.getMessageHeader(msg.length).getBytes();
+	}
+	
+	private String getMessageHeader(int headLength) {
+		return String.format("%08d", headLength);
+	}
+	
+	public int getHeadLength() {
+		return headLength;
+	}
+	
+	public void addHeadLength(int length) {
+		this.headLength += length;
+	}
+
+	public int getBodyLength() {
+		return bodyLength;
+	}
+	
+	public void addBodyLength(int length) {
+		this.bodyLength += length;
+	}
+	
+
 	/**
      * Writes data from the ByteBuffer into this message - 
      * meaning into the buffer backing this message.
@@ -75,6 +105,18 @@ public class Message {
     		 
     }
     
+    public boolean readCompleted() {
+    	return headLength == HEAD_CAPACITY && bodyLength == capacity ? true : false; 
+    }
+    
+    public int headRemainings() {
+    	return this.headLength<HEAD_CAPACITY ? HEAD_CAPACITY-this.headLength : 0;
+    }
+    
+    public int bodyRemainings() {
+    	return this.bodyLength<this.capacity? this.capacity-this.bodyLength : 0;
+    }
+    
     private Pattern headPatter = Pattern.compile("^0*(\\d*)$");
     
     //TODO: need to refine here
@@ -90,7 +132,20 @@ public class Message {
     }
 	
     public static void main(String[] args) {
+    	/*
     	Message message = new Message();
     	System.out.println(message.getBodyCapacity("00000010"));
+    	*/
+    	
+    	System.out.println(new Message().getMessageHeader(12));
     }
+
+	public long getSocketId() {
+		return socketId;
+	}
+
+	public void setSocketId(long socketId) {
+		this.socketId = socketId;
+	}
+
 }
